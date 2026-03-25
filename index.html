@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cycling Tracker</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222636;
+    --border: #2e3248;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --green: #3ecf8e;
+    --orange: #f97316;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #8892a4;
+    --text3: #4a5568;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── Layout ── */
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.3px; }
+  h1 span { color: var(--accent); }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Unit Toggle ── */
+  .unit-toggle {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .unit-toggle button {
+    padding: 6px 14px;
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .unit-toggle button.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #3d7ee8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,142,247,0.35); }
+
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text3); }
+
+  .btn-danger {
+    background: rgba(239,68,68,0.12);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.25);
+  }
+  .btn-danger:hover { background: rgba(239,68,68,0.22); }
+
+  .btn-success {
+    background: rgba(62,207,142,0.12);
+    color: var(--green);
+    border: 1px solid rgba(62,207,142,0.25);
+  }
+  .btn-success:hover { background: rgba(62,207,142,0.22); }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 9px 12px;
+    text-align: center;
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    border-radius: 9px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .tab:hover { color: var(--text); background: var(--surface2); }
+  .tab.active { background: var(--accent); color: #fff; }
+
+  /* ── Panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.25s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Form ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input, textarea, select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 0.9rem;
+    padding: 10px 12px;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    -webkit-appearance: none;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+  }
+
+  input[readonly] {
+    color: var(--text2);
+    cursor: default;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .input-suffix {
+    position: relative;
+  }
+
+  .input-suffix input { padding-right: 48px; }
+
+  .suffix-label {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text3);
+    pointer-events: none;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Stats ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .stat-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .stat-icon {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--text2);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-card.accent .stat-value { color: var(--accent); }
+  .stat-card.green .stat-value  { color: var(--green); }
+  .stat-card.orange .stat-value { color: var(--orange); }
+  .stat-card.purple .stat-value { color: var(--accent2); }
+
+  /* ── Chart ── */
+  .chart-wrap {
+    overflow-x: auto;
+  }
+
+  #chart-svg {
+    display: block;
+    width: 100%;
+    min-width: 320px;
+  }
+
+  .chart-bar { transition: opacity 0.15s; cursor: default; }
+  .chart-bar:hover { opacity: 0.8; }
+
+  /* ── History ── */
+  .history-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .history-count {
+    font-size: 0.82rem;
+    color: var(--text2);
+  }
+
+  .workout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .workout-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+
+  .workout-item:hover {
+    border-color: var(--border);
+    transform: translateX(2px);
+  }
+
+  .workout-date-col {
+    text-align: center;
+    min-width: 48px;
+  }
+
+  .workout-day {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .workout-month {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text2);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .workout-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metric-val {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .metric-lbl {
+    font-size: 0.7rem;
+    color: var(--text2);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .workout-notes {
+    font-size: 0.8rem;
+    color: var(--text2);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .workout-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+
+  .btn-icon.delete {
+    background: rgba(239,68,68,0.1);
+    color: var(--red);
+  }
+  .btn-icon.delete:hover {
+    background: rgba(239,68,68,0.25);
+    transform: scale(1.1);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text2);
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .empty-state p { font-size: 0.9rem; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 16px;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: var(--shadow);
+    transform: scale(0.95);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.show .modal { transform: scale(1); }
+
+  .modal h3 {
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+  }
+
+  .modal p {
+    color: var(--text2);
+    font-size: 0.875rem;
+    margin-bottom: 22px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* ── Misc ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  .text-muted { color: var(--text2); }
+
+  @media (max-width: 600px) {
+    header { padding: 20px 0 16px; }
+    h1 { font-size: 1.2rem; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .workout-item { grid-template-columns: auto 1fr; }
+    .workout-actions { grid-column: 1 / -1; justify-content: flex-end; }
+    .tab { font-size: 0.78rem; padding: 8px 6px; }
+  }
+
+  @media (max-width: 380px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="header-left">
+      <div class="logo">🚴</div>
+      <h1>Cycling <span>Tracker</span></h1>
+    </div>
+    <div class="header-actions">
+      <div class="unit-toggle">
+        <button id="btn-km" onclick="setUnit('km')">km</button>
+        <button id="btn-mi" onclick="setUnit('mi')">mi</button>
+      </div>
+      <button class="btn btn-success" onclick="exportCSV()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+      <button class="btn btn-danger" onclick="showClearModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Clear All
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" onclick="switchTab('log')" id="tab-log">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Log Ride
+    </button>
+    <button class="tab" onclick="switchTab('stats')" id="tab-stats">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Stats
+    </button>
+    <button class="tab" onclick="switchTab('history')" id="tab-history">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+      History
+    </button>
+  </nav>
+
+  <!-- LOG PANEL -->
+  <div class="panel active" id="panel-log">
+    <div class="card">
+      <div class="card-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        New Ride
+      </div>
+      <form id="workout-form" onsubmit="saveWorkout(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="inp-date">Date</label>
+            <input type="date" id="inp-date" required>
+          </div>
+          <div class="form-group">
+            <label for="inp-duration">Duration (min)</label>
+            <div class="input-suffix">
+              <input type="number" id="inp-duration" min="1" max="1440" step="1" placeholder="60" required oninput="calcSpeed()">
+              <span class="suffix-label">min</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inp-distance" id="lbl-distance">Distance (km)</label>
+            <div class="input-suffix">
+              <input type="number" id="inp-distance" min="0.1" step="0.1" placeholder="30.0" required oninput="calcSpeed()">
+              <span class="suffix-label" id="dist-unit">km</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inp-speed" id="lbl-speed">Avg Speed (km/h)</label>
+            <div class="input-suffix">
+              <input type="number" id="inp-speed" readonly placeholder="—">
+              <span class="suffix-label" id="speed-unit">km/h</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inp-calories">Calories (kcal)</label>
+            <div class="input-suffix">
+              <input type="number" id="inp-calories" min="0" step="1" placeholder="400">
+              <span class="suffix-label">kcal</span>
+            </div>
+          </div>
+          <div class="form-group full">
+            <label for="inp-notes">Notes</label>
+            <textarea id="inp-notes" placeholder="Morning ride, felt strong…"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="resetForm()">Reset</button>
+          <button type="submit" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Ride
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STATS PANEL -->
+  <div class="panel" id="panel-stats">
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Last 10 Rides — Distance
+      </div>
+      <div class="chart-wrap">
+        <svg id="chart-svg" height="180"></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY PANEL -->
+  <div class="panel" id="panel-history">
+    <div class="history-controls">
+      <span class="history-count" id="history-count"></span>
+      <button class="btn btn-success" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+    <div class="workout-list" id="workout-list"></div>
+  </div>
+</div>
+
+<!-- Clear confirmation modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3>Clear all data?</h3>
+    <p>This will permanently delete all your workout history and stats. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="hideModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearAll()">Yes, delete everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────────
+let workouts = [];
+let unit = 'km'; // or 'mi'
+const KM_TO_MI = 0.621371;
+
+function load() {
+  try {
+    workouts = JSON.parse(localStorage.getItem('ct_workouts') || '[]');
+    unit = localStorage.getItem('ct_unit') || 'km';
+  } catch(e) {
+    workouts = [];
+  }
+}
+
+function save() {
+  localStorage.setItem('ct_workouts', JSON.stringify(workouts));
+  localStorage.setItem('ct_unit', unit);
+}
+
+// ─────────────────────────────────────────────
+//  Unit helpers
+// ─────────────────────────────────────────────
+function setUnit(u) {
+  unit = u;
+  save();
+  document.getElementById('btn-km').classList.toggle('active', u === 'km');
+  document.getElementById('btn-mi').classList.toggle('active', u === 'mi');
+  document.getElementById('lbl-distance').textContent = `Distance (${u})`;
+  document.getElementById('lbl-speed').textContent = `Avg Speed (${u}/h)`;
+  document.getElementById('dist-unit').textContent = u;
+  document.getElementById('speed-unit').textContent = `${u}/h`;
+  calcSpeed();
+  renderStats();
+  renderHistory();
+}
+
+// Convert stored km value to display unit
+function toDisplay(km) {
+  return unit === 'mi' ? km * KM_TO_MI : km;
+}
+
+// Convert user input to km for storage
+function toKm(val) {
+  return unit === 'mi' ? val / KM_TO_MI : val;
+}
+
+function fmt(val, dec=1) {
+  return Number(val).toFixed(dec);
+}
+
+// ─────────────────────────────────────────────
+//  Auto-calculate speed
+// ─────────────────────────────────────────────
+function calcSpeed() {
+  const dur = parseFloat(document.getElementById('inp-duration').value);
+  const dist = parseFloat(document.getElementById('inp-distance').value);
+  const speedEl = document.getElementById('inp-speed');
+  if (dur > 0 && dist > 0) {
+    const hours = dur / 60;
+    speedEl.value = fmt(dist / hours, 1);
+  } else {
+    speedEl.value = '';
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Form
+// ─────────────────────────────────────────────
+function initForm() {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('inp-date').value = today;
+}
+
+function resetForm() {
+  document.getElementById('workout-form').reset();
+  initForm();
+  document.getElementById('inp-speed').value = '';
+}
+
+function saveWorkout(e) {
+  e.preventDefault();
+  const date     = document.getElementById('inp-date').value;
+  const duration = parseFloat(document.getElementById('inp-duration').value);
+  const distDisp = parseFloat(document.getElementById('inp-distance').value);
+  const calories = parseInt(document.getElementById('inp-calories').value) || 0;
+  const notes    = document.getElementById('inp-notes').value.trim();
+
+  // Always store distance in km
+  const distKm = toKm(distDisp);
+  const speedKmh = (distKm / (duration / 60));
+
+  const workout = {
+    id: Date.now(),
+    date,
+    duration,        // minutes
+    distKm,          // always km
+    speedKmh,        // always km/h
+    calories,
+    notes
+  };
+
+  workouts.unshift(workout);
+  save();
+  resetForm();
+  renderStats();
+  renderHistory();
+  toast('Ride saved! 🚴', 'green');
+  switchTab('history');
+}
+
+// ─────────────────────────────────────────────
+//  Stats
+// ─────────────────────────────────────────────
+function renderStats() {
+  const grid = document.getElementById('stats-grid');
+
+  if (!workouts.length) {
+    grid.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;padding:40px">
+      <div class="empty-icon">📊</div>
+      <p class="text-muted">Log some rides to see your stats.</p>
+    </div>`;
+    renderChart([]);
+    return;
+  }
+
+  const totalRides    = workouts.length;
+  const totalDistKm   = workouts.reduce((s,w)=>s+w.distKm, 0);
+  const totalMinutes  = workouts.reduce((s,w)=>s+w.duration, 0);
+  const totalCal      = workouts.reduce((s,w)=>s+w.calories, 0);
+  const avgSpeedKmh   = totalDistKm / (totalMinutes / 60);
+  const bestDistKm    = Math.max(...workouts.map(w=>w.distKm));
+  const bestSpeedKmh  = Math.max(...workouts.map(w=>w.speedKmh));
+
+  const distDisplay   = toDisplay(totalDistKm);
+  const avgSpeedDisp  = toDisplay(avgSpeedKmh);
+  const bestDistDisp  = toDisplay(bestDistKm);
+  const bestSpeedDisp = toDisplay(bestSpeedKmh);
+
+  const hours = Math.floor(totalMinutes / 60);
+  const mins  = totalMinutes % 60;
+  const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
+  const stats = [
+    { icon:'🚴', label:'Total Rides',       value: totalRides,                   unit:'',         cls:'accent' },
+    { icon:'📏', label:`Total Distance`,    value: fmt(distDisplay),             unit:unit,        cls:'green'  },
+    { icon:'⏱️', label:'Total Time',        value: timeStr,                      unit:'',         cls:''       },
+    { icon:'⚡', label:`Avg Speed`,         value: fmt(avgSpeedDisp),            unit:`${unit}/h`, cls:'orange' },
+    { icon:'🏆', label:`Best Distance`,     value: fmt(bestDistDisp),            unit:unit,        cls:'purple' },
+    { icon:'🔥', label:`Best Speed`,        value: fmt(bestSpeedDisp),           unit:`${unit}/h`, cls:'accent' },
+    { icon:'💪', label:'Calories Burned',   value: totalCal.toLocaleString(),    unit:'kcal',     cls:'green'  },
+  ];
+
+  grid.innerHTML = stats.map(s => `
+    <div class="stat-card ${s.cls}">
+      <div class="stat-icon">${s.icon}</div>
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-label">${s.label}${s.unit ? ' · '+s.unit : ''}</div>
+    </div>
+  `).join('');
+
+  // chart: last 10 rides in chronological order
+  const chartData = workouts.slice(0, 10).reverse();
+  renderChart(chartData);
+}
+
+// ─────────────────────────────────────────────
+//  SVG Chart
+// ─────────────────────────────────────────────
+function renderChart(data) {
+  const svg = document.getElementById('chart-svg');
+  if (!data.length) {
+    svg.innerHTML = `<text x="50%" y="90" text-anchor="middle" fill="#4a5568" font-size="13" font-family="system-ui">No data yet</text>`;
+    return;
+  }
+
+  const W = 800, H = 180;
+  const padL = 46, padR = 12, padT = 16, padB = 40;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+
+  const vals = data.map(w => toDisplay(w.distKm));
+  const maxVal = Math.max(...vals, 0.1);
+
+  const barW    = Math.min(48, (innerW / data.length) - 8);
+  const spacing = innerW / data.length;
+
+  // y-axis gridlines
+  const ticks = 4;
+  let gridLines = '';
+  let yLabels   = '';
+  for (let i = 0; i <= ticks; i++) {
+    const yVal  = (maxVal / ticks) * i;
+    const yPos  = padT + innerH - (yVal / maxVal) * innerH;
+    gridLines  += `<line x1="${padL}" y1="${yPos}" x2="${W-padR}" y2="${yPos}" stroke="#2e3248" stroke-width="1"/>`;
+    yLabels    += `<text x="${padL-6}" y="${yPos+4}" text-anchor="end" fill="#4a5568" font-size="10" font-family="system-ui">${fmt(yVal,0)}</text>`;
+  }
+
+  // bars
+  const accent = '#4f8ef7';
+  const accentD = '#3d7ee8';
+  let bars = '', xlabels = '', tooltips = '';
+
+  data.forEach((w, i) => {
+    const v    = vals[i];
+    const barH = (v / maxVal) * innerH;
+    const x    = padL + spacing * i + spacing / 2 - barW / 2;
+    const y    = padT + innerH - barH;
+    const d    = new Date(w.date + 'T00:00:00');
+    const lbl  = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+
+    const rx = 4;
+    bars    += `<rect class="chart-bar" x="${x}" y="${y}" width="${barW}" height="${barH}"
+                  rx="${rx}" fill="url(#barGrad)" data-val="${fmt(v)} ${unit}"/>`;
+    xlabels += `<text x="${x + barW/2}" y="${H - padB + 14}" text-anchor="middle"
+                  fill="#4a5568" font-size="9.5" font-family="system-ui">${lbl}</text>`;
+    // value label on bar
+    if (barH > 20) {
+      bars += `<text x="${x + barW/2}" y="${y - 5}" text-anchor="middle"
+                 fill="#8892a4" font-size="9" font-family="system-ui">${fmt(v,1)}</text>`;
+    }
+  });
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${accent}"/>
+        <stop offset="100%" stop-color="${accentD}" stop-opacity="0.7"/>
+      </linearGradient>
+    </defs>
+    ${gridLines}
+    ${yLabels}
+    ${bars}
+    ${xlabels}
+    <text x="${padL}" y="${H-2}" fill="#4a5568" font-size="9" font-family="system-ui">${unit}</text>
+  `;
+}
+
+// ─────────────────────────────────────────────
+//  History
+// ─────────────────────────────────────────────
+function renderHistory() {
+  const list  = document.getElementById('workout-list');
+  const count = document.getElementById('history-count');
+
+  if (!workouts.length) {
+    count.textContent = 'No rides yet';
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🚴</div>
+        <p>Your rides will appear here.<br>Log your first ride to get started!</p>
+      </div>`;
+    return;
+  }
+
+  count.textContent = `${workouts.length} ride${workouts.length !== 1 ? 's' : ''} logged`;
+
+  list.innerHTML = workouts.map(w => {
+    const d     = new Date(w.date + 'T00:00:00');
+    const day   = d.getDate();
+    const month = d.toLocaleDateString('en-US', { month:'short' });
+    const year  = d.getFullYear();
+    const distD = fmt(toDisplay(w.distKm));
+    const spdD  = fmt(toDisplay(w.speedKmh));
+    const hrs   = Math.floor(w.duration/60);
+    const mins  = w.duration % 60;
+    const timeS = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+
+    return `
+    <div class="workout-item" id="wi-${w.id}">
+      <div class="workout-date-col">
+        <div class="workout-day">${day}</div>
+        <div class="workout-month">${month}</div>
+        <div class="workout-month">${year}</div>
+      </div>
+      <div>
+        <div class="workout-metrics">
+          <div class="metric">
+            <span class="metric-val">${distD} ${unit}</span>
+            <span class="metric-lbl">Distance</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val">${timeS}</span>
+            <span class="metric-lbl">Duration</span>
+          </div>
+          <div class="metric">
+            <span class="metric-val">${spdD} ${unit}/h</span>
+            <span class="metric-lbl">Avg Speed</span>
+          </div>
+          ${w.calories ? `<div class="metric">
+            <span class="metric-val">${w.calories} kcal</span>
+            <span class="metric-lbl">Calories</span>
+          </div>` : ''}
+        </div>
+        ${w.notes ? `<div class="workout-notes">${escHtml(w.notes)}</div>` : ''}
+      </div>
+      <div class="workout-actions">
+        <button class="btn-icon delete" onclick="deleteWorkout(${w.id})" title="Delete ride">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─────────────────────────────────────────────
+//  Delete
+// ─────────────────────────────────────────────
+function deleteWorkout(id) {
+  workouts = workouts.filter(w => w.id !== id);
+  save();
+  renderStats();
+  renderHistory();
+  toast('Ride deleted', 'red');
+}
+
+// ─────────────────────────────────────────────
+//  Clear all
+// ─────────────────────────────────────────────
+function showClearModal() {
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function hideModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function clearAll() {
+  workouts = [];
+  save();
+  hideModal();
+  renderStats();
+  renderHistory();
+  toast('All data cleared', 'red');
+}
+
+// Click outside to close
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) hideModal();
+});
+
+// ─────────────────────────────────────────────
+//  CSV Export
+// ─────────────────────────────────────────────
+function exportCSV() {
+  if (!workouts.length) { toast('No rides to export', 'orange'); return; }
+
+  const u = unit;
+  const headers = ['Date','Duration (min)',`Distance (${u})`,`Avg Speed (${u}/h)`,'Calories','Notes'];
+
+  const rows = workouts.map(w => [
+    w.date,
+    w.duration,
+    fmt(toDisplay(w.distKm), 2),
+    fmt(toDisplay(w.speedKmh), 2),
+    w.calories,
+    `"${(w.notes||'').replace(/"/g,'""')}"`
+  ].join(','));
+
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `cycling-tracker-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV exported!', 'green');
+}
+
+// ─────────────────────────────────────────────
+//  Tabs
+// ─────────────────────────────────────────────
+function switchTab(name) {
+  ['log','stats','history'].forEach(t => {
+    document.getElementById(`panel-${t}`).classList.toggle('active', t === name);
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === name);
+  });
+  if (name === 'stats')   renderStats();
+  if (name === 'history') renderHistory();
+}
+
+// ─────────────────────────────────────────────
+//  Toast
+// ─────────────────────────────────────────────
+let toastTimer;
+function toast(msg, color) {
+  const el = document.getElementById('toast');
+  const icons = { green:'✓', red:'✕', orange:'!' };
+  const colors = { green: 'var(--green)', red: 'var(--red)', orange: 'var(--orange)' };
+  el.innerHTML = `<span style="color:${colors[color]||'var(--accent)'};font-size:1rem">${icons[color]||'ℹ'}</span> ${msg}`;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ─────────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────────
+(function init() {
+  load();
+  initForm();
+  setUnit(unit);
+})();
+</script>
+</body>
+</html>
