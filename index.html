@@ -4,150 +4,197 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cycling Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #222636;
-    --border: #2e3248;
-    --accent: #4f8ef7;
-    --accent2: #7c5cfc;
-    --green: #3ecf8e;
-    --orange: #f97316;
-    --red: #ef4444;
-    --text: #e2e8f0;
-    --text2: #8892a4;
-    --text3: #4a5568;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --bg:      #0b0b0e;
+    --surface: #111116;
+    --surface2:#18181f;
+    --border:  rgba(255,255,255,0.07);
+    --lime:    #c8ff00;
+    --lime-dim:rgba(200,255,0,0.12);
+    --lime-glow:rgba(200,255,0,0.22);
+    --red:     #ff4545;
+    --red-dim: rgba(255,69,69,0.12);
+    --orange:  #ff8c42;
+    --teal:    #00e5c8;
+    --text:    #f0f0f0;
+    --muted:   #5a5a6a;
+    --muted2:  #3a3a48;
+    --radius:  14px;
+    --radius-sm: 9px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
+    font-family: 'DM Sans', system-ui, sans-serif;
     min-height: 100vh;
     line-height: 1.5;
+    /* Grain texture */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
-  /* ── Layout ── */
   .app {
-    max-width: 1100px;
+    max-width: 1060px;
     margin: 0 auto;
-    padding: 0 16px 60px;
+    padding: 0 20px 80px;
   }
 
+  /* ── HEADER ─────────────────────────────────────────────── */
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 28px 0 24px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 32px;
-    gap: 12px;
+    padding: 32px 0 28px;
+    margin-bottom: 28px;
+    gap: 16px;
     flex-wrap: wrap;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--lime) 0%, transparent 60%);
+    opacity: 0.3;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
 
   .logo {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
+    width: 44px;
+    height: 44px;
+    background: var(--lime);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 0 20px var(--lime-glow);
   }
 
-  h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.3px; }
-  h1 span { color: var(--accent); }
+  .logo svg { width: 24px; height: 24px; }
+
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  h1 span { color: var(--lime); }
+
+  .tagline {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
 
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
-  /* ── Unit Toggle ── */
+  /* ── UNIT TOGGLE ─────────────────────────────────────────── */
   .unit-toggle {
     display: flex;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 9px;
     overflow: hidden;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
   }
 
   .unit-toggle button {
-    padding: 6px 14px;
+    padding: 7px 16px;
     background: none;
     border: none;
-    color: var(--text2);
+    color: var(--muted);
     cursor: pointer;
     transition: all 0.2s;
-    letter-spacing: 0.3px;
+    text-transform: uppercase;
   }
 
   .unit-toggle button.active {
-    background: var(--accent);
-    color: #fff;
+    background: var(--lime);
+    color: #0b0b0e;
   }
 
-  /* ── Buttons ── */
+  /* ── BUTTONS ─────────────────────────────────────────────── */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
     border-radius: var(--radius-sm);
-    border: none;
-    font-size: 0.85rem;
+    border: 1px solid transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s;
     text-decoration: none;
   }
 
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
+  .btn-lime {
+    background: var(--lime);
+    color: #0b0b0e;
+    border-color: var(--lime);
   }
-  .btn-primary:hover { background: #3d7ee8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,142,247,0.35); }
+  .btn-lime:hover {
+    box-shadow: 0 4px 16px var(--lime-glow);
+    transform: translateY(-1px);
+  }
 
   .btn-ghost {
     background: var(--surface);
-    color: var(--text2);
-    border: 1px solid var(--border);
+    color: var(--muted);
+    border-color: var(--border);
   }
-  .btn-ghost:hover { color: var(--text); border-color: var(--text3); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted2); }
 
   .btn-danger {
-    background: rgba(239,68,68,0.12);
+    background: var(--red-dim);
     color: var(--red);
-    border: 1px solid rgba(239,68,68,0.25);
+    border-color: rgba(255,69,69,0.2);
   }
-  .btn-danger:hover { background: rgba(239,68,68,0.22); }
+  .btn-danger:hover { background: rgba(255,69,69,0.2); }
 
-  .btn-success {
-    background: rgba(62,207,142,0.12);
-    color: var(--green);
-    border: 1px solid rgba(62,207,142,0.25);
+  .btn-export {
+    background: rgba(0,229,200,0.1);
+    color: var(--teal);
+    border-color: rgba(0,229,200,0.2);
   }
-  .btn-success:hover { background: rgba(62,207,142,0.22); }
+  .btn-export:hover { background: rgba(0,229,200,0.18); }
 
-  /* ── Tabs ── */
+  /* ── TABS ────────────────────────────────────────────────── */
   .tabs {
     display: flex;
-    gap: 4px;
+    gap: 3px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -157,58 +204,86 @@
 
   .tab {
     flex: 1;
-    padding: 9px 12px;
+    padding: 10px 12px;
     text-align: center;
     background: none;
     border: none;
-    color: var(--text2);
+    color: var(--muted);
     cursor: pointer;
-    border-radius: 9px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 7px;
   }
 
   .tab:hover { color: var(--text); background: var(--surface2); }
-  .tab.active { background: var(--accent); color: #fff; }
 
-  /* ── Panels ── */
+  .tab.active {
+    background: var(--lime);
+    color: #0b0b0e;
+    box-shadow: 0 2px 12px var(--lime-glow);
+  }
+
+  /* ── PANELS ──────────────────────────────────────────────── */
   .panel { display: none; }
-  .panel.active { display: block; animation: fadeIn 0.25s ease; }
+  .panel.active {
+    display: block;
+    animation: fadeUp 0.3s ease both;
+  }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Form ── */
+  /* ── CARDS ───────────────────────────────────────────────── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 24px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
   }
 
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--lime);
+    border-radius: 2px 0 0 2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card:hover::before { opacity: 1; }
+
   .card-title {
-    font-size: 0.9rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: var(--text2);
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.1em;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
+  /* ── FORM ────────────────────────────────────────────────── */
   .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
     gap: 16px;
   }
 
@@ -221,11 +296,12 @@
   .form-group.full { grid-column: 1 / -1; }
 
   label {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: var(--text2);
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.07em;
+    font-family: 'Barlow Condensed', sans-serif;
   }
 
   input, textarea, select {
@@ -234,43 +310,40 @@
     border-radius: var(--radius-sm);
     color: var(--text);
     font-size: 0.9rem;
-    padding: 10px 12px;
+    padding: 11px 13px;
     width: 100%;
     transition: border-color 0.2s, box-shadow 0.2s;
-    font-family: inherit;
+    font-family: 'DM Sans', sans-serif;
     -webkit-appearance: none;
   }
 
   input:focus, textarea:focus {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+    border-color: var(--lime);
+    box-shadow: 0 0 0 3px var(--lime-dim);
   }
 
-  input[readonly] {
-    color: var(--text2);
-    cursor: default;
-  }
+  input[readonly] { color: var(--muted); cursor: default; }
 
   textarea {
     resize: vertical;
     min-height: 80px;
   }
 
-  .input-suffix {
-    position: relative;
-  }
-
-  .input-suffix input { padding-right: 48px; }
+  .input-suffix { position: relative; }
+  .input-suffix input { padding-right: 50px; }
 
   .suffix-label {
     position: absolute;
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text3);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted2);
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     pointer-events: none;
   }
 
@@ -278,92 +351,112 @@
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: 22px;
     padding-top: 20px;
     border-top: 1px solid var(--border);
   }
 
-  /* ── Stats ── */
+  /* ── STAT CARDS ──────────────────────────────────────────── */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 14px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px;
+    padding: 20px 18px 18px;
     transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
   }
 
-  .stat-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    opacity: 0;
+    transition: opacity 0.2s;
   }
+
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-card:hover::after { opacity: 1; }
+  .stat-card:hover { border-color: rgba(255,255,255,0.15); }
+
+  .stat-card.lime::after  { background: var(--lime); }
+  .stat-card.teal::after  { background: var(--teal); }
+  .stat-card.orange::after{ background: var(--orange); }
+  .stat-card.red::after   { background: var(--red); }
 
   .stat-icon {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    opacity: 0.8;
   }
 
   .stat-value {
-    font-size: 1.6rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2rem;
     font-weight: 800;
     letter-spacing: -0.5px;
-    color: var(--text);
     line-height: 1;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    color: var(--text);
   }
+
+  .stat-card.lime .stat-value  { color: var(--lime); }
+  .stat-card.teal .stat-value  { color: var(--teal); }
+  .stat-card.orange .stat-value{ color: var(--orange); }
+  .stat-card.red .stat-value   { color: var(--red); }
 
   .stat-label {
-    font-size: 0.75rem;
-    color: var(--text2);
+    font-size: 0.68rem;
+    color: var(--muted);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.07em;
+    font-family: 'Barlow Condensed', sans-serif;
   }
 
-  .stat-card.accent .stat-value { color: var(--accent); }
-  .stat-card.green .stat-value  { color: var(--green); }
-  .stat-card.orange .stat-value { color: var(--orange); }
-  .stat-card.purple .stat-value { color: var(--accent2); }
-
-  /* ── Chart ── */
-  .chart-wrap {
-    overflow-x: auto;
-  }
-
+  /* ── CHART ───────────────────────────────────────────────── */
+  .chart-wrap { overflow-x: auto; }
   #chart-svg {
     display: block;
     width: 100%;
     min-width: 320px;
   }
 
-  .chart-bar { transition: opacity 0.15s; cursor: default; }
-  .chart-bar:hover { opacity: 0.8; }
+  .chart-bar { cursor: default; transition: opacity 0.15s; }
+  .chart-bar:hover { opacity: 0.75; }
 
-  /* ── History ── */
+  /* ── HISTORY ─────────────────────────────────────────────── */
   .history-controls {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     gap: 12px;
     flex-wrap: wrap;
   }
 
   .history-count {
-    font-size: 0.82rem;
-    color: var(--text2);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
   .workout-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .workout-item {
@@ -372,73 +465,84 @@
     border-radius: var(--radius);
     padding: 16px 20px;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 56px 1fr auto;
     gap: 16px;
     align-items: center;
-    transition: border-color 0.2s, transform 0.15s;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .workout-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--lime);
+    opacity: 0;
+    transition: opacity 0.2s;
   }
 
   .workout-item:hover {
-    border-color: var(--border);
-    transform: translateX(2px);
+    border-color: rgba(200,255,0,0.2);
+    transform: translateX(3px);
+    box-shadow: -3px 0 20px var(--lime-dim);
   }
 
-  .workout-date-col {
-    text-align: center;
-    min-width: 48px;
-  }
+  .workout-item:hover::before { opacity: 1; }
+
+  .workout-date-col { text-align: center; }
 
   .workout-day {
-    font-size: 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.8rem;
     font-weight: 800;
-    color: var(--accent);
+    color: var(--lime);
     line-height: 1;
   }
 
   .workout-month {
-    font-size: 0.7rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    color: var(--text2);
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.06em;
   }
 
   .workout-metrics {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 20px;
   }
 
-  .metric {
-    display: flex;
-    flex-direction: column;
-  }
+  .metric { display: flex; flex-direction: column; gap: 1px; }
 
   .metric-val {
-    font-size: 1rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--text);
+    letter-spacing: 0.02em;
   }
 
   .metric-lbl {
-    font-size: 0.7rem;
-    color: var(--text2);
+    font-size: 0.65rem;
+    color: var(--muted);
     text-transform: uppercase;
     font-weight: 600;
+    letter-spacing: 0.06em;
+    font-family: 'Barlow Condensed', sans-serif;
   }
 
   .workout-notes {
-    font-size: 0.8rem;
-    color: var(--text2);
-    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 6px;
     font-style: italic;
   }
 
-  .workout-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
+  .workout-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
   .btn-icon {
     width: 32px; height: 32px;
@@ -451,29 +555,25 @@
   }
 
   .btn-icon.delete {
-    background: rgba(239,68,68,0.1);
+    background: var(--red-dim);
     color: var(--red);
+    border: 1px solid rgba(255,69,69,0.15);
   }
   .btn-icon.delete:hover {
-    background: rgba(239,68,68,0.25);
+    background: rgba(255,69,69,0.22);
     transform: scale(1.1);
   }
 
   .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: var(--text2);
+    color: var(--muted);
   }
 
-  .empty-icon {
-    font-size: 3rem;
-    margin-bottom: 12px;
-    opacity: 0.5;
-  }
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state p { font-size: 0.88rem; }
 
-  .empty-state p { font-size: 0.9rem; }
-
-  /* ── Toast ── */
+  /* ── TOAST ───────────────────────────────────────────────── */
   #toast {
     position: fixed;
     bottom: 24px;
@@ -482,44 +582,38 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 12px 18px;
-    font-size: 0.85rem;
+    font-size: 0.83rem;
     font-weight: 600;
     color: var(--text);
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     transform: translateY(80px);
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
     z-index: 100;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  #toast.show {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  #toast.show { transform: translateY(0); opacity: 1; }
 
-  /* ── Modal ── */
+  /* ── MODAL ───────────────────────────────────────────────── */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 200;
-    padding: 16px;
-    backdrop-filter: blur(4px);
+    padding: 20px;
+    backdrop-filter: blur(8px);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;
   }
 
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: all;
-  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
 
   .modal {
     background: var(--surface);
@@ -528,90 +622,85 @@
     padding: 28px;
     max-width: 380px;
     width: 100%;
-    box-shadow: var(--shadow);
-    transform: scale(0.95);
-    transition: transform 0.2s;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    transform: scale(0.94);
+    transition: transform 0.22s;
   }
 
   .modal-overlay.show .modal { transform: scale(1); }
 
   .modal h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     margin-bottom: 10px;
-    font-size: 1.05rem;
   }
 
-  .modal p {
-    color: var(--text2);
-    font-size: 0.875rem;
-    margin-bottom: 22px;
-  }
+  .modal p { color: var(--muted); font-size: 0.875rem; margin-bottom: 22px; }
 
-  .modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-  }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
-  /* ── Misc ── */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 20px 0;
-  }
-
-  .text-muted { color: var(--text2); }
-
+  /* ── MISC ────────────────────────────────────────────────── */
   @media (max-width: 600px) {
-    header { padding: 20px 0 16px; }
-    h1 { font-size: 1.2rem; }
+    h1 { font-size: 1.4rem; }
     .form-grid { grid-template-columns: 1fr 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
-    .workout-item { grid-template-columns: auto 1fr; }
+    .workout-item { grid-template-columns: 46px 1fr; }
     .workout-actions { grid-column: 1 / -1; justify-content: flex-end; }
-    .tab { font-size: 0.78rem; padding: 8px 6px; }
-  }
-
-  @media (max-width: 380px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .tab { font-size: 0.8rem; }
   }
 </style>
 </head>
 <body>
 
 <div class="app">
+
+  <!-- HEADER -->
   <header>
     <div class="header-left">
-      <div class="logo">🚴</div>
-      <h1>Cycling <span>Tracker</span></h1>
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="5.5" cy="17.5" r="3" stroke="#0b0b0e" stroke-width="2"/>
+          <circle cx="18.5" cy="17.5" r="3" stroke="#0b0b0e" stroke-width="2"/>
+          <path d="M5.5 17.5L10 8l4 4 3-6" stroke="#0b0b0e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 8h4" stroke="#0b0b0e" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Cycling <span>Tracker</span></h1>
+        <div class="tagline">Track · Analyze · Improve</div>
+      </div>
     </div>
     <div class="header-actions">
       <div class="unit-toggle">
         <button id="btn-km" onclick="setUnit('km')">km</button>
         <button id="btn-mi" onclick="setUnit('mi')">mi</button>
       </div>
-      <button class="btn btn-success" onclick="exportCSV()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export CSV
+      <button class="btn btn-export" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
       </button>
       <button class="btn btn-danger" onclick="showClearModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        Clear All
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Clear
       </button>
     </div>
   </header>
 
+  <!-- TABS -->
   <nav class="tabs">
     <button class="tab active" onclick="switchTab('log')" id="tab-log">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       Log Ride
     </button>
     <button class="tab" onclick="switchTab('stats')" id="tab-stats">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Stats
     </button>
     <button class="tab" onclick="switchTab('history')" id="tab-history">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
       History
     </button>
   </nav>
@@ -620,7 +709,7 @@
   <div class="panel active" id="panel-log">
     <div class="card">
       <div class="card-title">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         New Ride
       </div>
       <form id="workout-form" onsubmit="saveWorkout(event)">
@@ -630,28 +719,28 @@
             <input type="date" id="inp-date" required>
           </div>
           <div class="form-group">
-            <label for="inp-duration">Duration (min)</label>
+            <label for="inp-duration">Duration</label>
             <div class="input-suffix">
               <input type="number" id="inp-duration" min="1" max="1440" step="1" placeholder="60" required oninput="calcSpeed()">
               <span class="suffix-label">min</span>
             </div>
           </div>
           <div class="form-group">
-            <label for="inp-distance" id="lbl-distance">Distance (km)</label>
+            <label for="inp-distance" id="lbl-distance">Distance</label>
             <div class="input-suffix">
               <input type="number" id="inp-distance" min="0.1" step="0.1" placeholder="30.0" required oninput="calcSpeed()">
               <span class="suffix-label" id="dist-unit">km</span>
             </div>
           </div>
           <div class="form-group">
-            <label for="inp-speed" id="lbl-speed">Avg Speed (km/h)</label>
+            <label for="inp-speed" id="lbl-speed">Avg Speed</label>
             <div class="input-suffix">
               <input type="number" id="inp-speed" readonly placeholder="—">
               <span class="suffix-label" id="speed-unit">km/h</span>
             </div>
           </div>
           <div class="form-group">
-            <label for="inp-calories">Calories (kcal)</label>
+            <label for="inp-calories">Calories</label>
             <div class="input-suffix">
               <input type="number" id="inp-calories" min="0" step="1" placeholder="400">
               <span class="suffix-label">kcal</span>
@@ -664,8 +753,8 @@
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-ghost" onclick="resetForm()">Reset</button>
-          <button type="submit" class="btn btn-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <button type="submit" class="btn btn-lime">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Save Ride
           </button>
         </div>
@@ -676,10 +765,9 @@
   <!-- STATS PANEL -->
   <div class="panel" id="panel-stats">
     <div class="stats-grid" id="stats-grid"></div>
-
     <div class="card">
       <div class="card-title">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Last 10 Rides — Distance
       </div>
       <div class="chart-wrap">
@@ -692,23 +780,24 @@
   <div class="panel" id="panel-history">
     <div class="history-controls">
       <span class="history-count" id="history-count"></span>
-      <button class="btn btn-success" onclick="exportCSV()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <button class="btn btn-export" onclick="exportCSV()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export CSV
       </button>
     </div>
     <div class="workout-list" id="workout-list"></div>
   </div>
+
 </div>
 
-<!-- Clear confirmation modal -->
+<!-- Modal -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <h3>Clear all data?</h3>
-    <p>This will permanently delete all your workout history and stats. This action cannot be undone.</p>
+    <h3>Clear All Data?</h3>
+    <p>This permanently deletes your entire workout history. Cannot be undone.</p>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="hideModal()">Cancel</button>
-      <button class="btn btn-danger" onclick="clearAll()">Yes, delete everything</button>
+      <button class="btn btn-danger" onclick="clearAll()">Delete Everything</button>
     </div>
   </div>
 </div>
@@ -721,16 +810,14 @@
 //  State
 // ─────────────────────────────────────────────
 let workouts = [];
-let unit = 'km'; // or 'mi'
+let unit = 'km';
 const KM_TO_MI = 0.621371;
 
 function load() {
   try {
     workouts = JSON.parse(localStorage.getItem('ct_workouts') || '[]');
-    unit = localStorage.getItem('ct_unit') || 'km';
-  } catch(e) {
-    workouts = [];
-  }
+    unit     = localStorage.getItem('ct_unit') || 'km';
+  } catch(e) { workouts = []; }
 }
 
 function save() {
@@ -738,8 +825,12 @@ function save() {
   localStorage.setItem('ct_unit', unit);
 }
 
+function toDisplay(km) { return unit === 'mi' ? km * KM_TO_MI : km; }
+function toKm(val)     { return unit === 'mi' ? val / KM_TO_MI : val; }
+function fmt(val, dec=1) { return Number(val).toFixed(dec); }
+
 // ─────────────────────────────────────────────
-//  Unit helpers
+//  Unit
 // ─────────────────────────────────────────────
 function setUnit(u) {
   unit = u;
@@ -747,49 +838,26 @@ function setUnit(u) {
   document.getElementById('btn-km').classList.toggle('active', u === 'km');
   document.getElementById('btn-mi').classList.toggle('active', u === 'mi');
   document.getElementById('lbl-distance').textContent = `Distance (${u})`;
-  document.getElementById('lbl-speed').textContent = `Avg Speed (${u}/h)`;
-  document.getElementById('dist-unit').textContent = u;
-  document.getElementById('speed-unit').textContent = `${u}/h`;
+  document.getElementById('lbl-speed').textContent    = `Avg Speed (${u}/h)`;
+  document.getElementById('dist-unit').textContent    = u;
+  document.getElementById('speed-unit').textContent   = `${u}/h`;
   calcSpeed();
   renderStats();
   renderHistory();
 }
 
-// Convert stored km value to display unit
-function toDisplay(km) {
-  return unit === 'mi' ? km * KM_TO_MI : km;
-}
-
-// Convert user input to km for storage
-function toKm(val) {
-  return unit === 'mi' ? val / KM_TO_MI : val;
-}
-
-function fmt(val, dec=1) {
-  return Number(val).toFixed(dec);
-}
-
-// ─────────────────────────────────────────────
-//  Auto-calculate speed
-// ─────────────────────────────────────────────
-function calcSpeed() {
-  const dur = parseFloat(document.getElementById('inp-duration').value);
-  const dist = parseFloat(document.getElementById('inp-distance').value);
-  const speedEl = document.getElementById('inp-speed');
-  if (dur > 0 && dist > 0) {
-    const hours = dur / 60;
-    speedEl.value = fmt(dist / hours, 1);
-  } else {
-    speedEl.value = '';
-  }
-}
-
 // ─────────────────────────────────────────────
 //  Form
 // ─────────────────────────────────────────────
+function calcSpeed() {
+  const dur  = parseFloat(document.getElementById('inp-duration').value);
+  const dist = parseFloat(document.getElementById('inp-distance').value);
+  const el   = document.getElementById('inp-speed');
+  el.value   = (dur > 0 && dist > 0) ? fmt(dist / (dur / 60), 1) : '';
+}
+
 function initForm() {
-  const today = new Date().toISOString().slice(0, 10);
-  document.getElementById('inp-date').value = today;
+  document.getElementById('inp-date').value = new Date().toISOString().slice(0, 10);
 }
 
 function resetForm() {
@@ -805,27 +873,15 @@ function saveWorkout(e) {
   const distDisp = parseFloat(document.getElementById('inp-distance').value);
   const calories = parseInt(document.getElementById('inp-calories').value) || 0;
   const notes    = document.getElementById('inp-notes').value.trim();
+  const distKm   = toKm(distDisp);
+  const speedKmh = distKm / (duration / 60);
 
-  // Always store distance in km
-  const distKm = toKm(distDisp);
-  const speedKmh = (distKm / (duration / 60));
-
-  const workout = {
-    id: Date.now(),
-    date,
-    duration,        // minutes
-    distKm,          // always km
-    speedKmh,        // always km/h
-    calories,
-    notes
-  };
-
-  workouts.unshift(workout);
+  workouts.unshift({ id: Date.now(), date, duration, distKm, speedKmh, calories, notes });
   save();
   resetForm();
   renderStats();
   renderHistory();
-  toast('Ride saved! 🚴', 'green');
+  toast('Ride saved ✓', 'lime');
   switchTab('history');
 }
 
@@ -834,126 +890,99 @@ function saveWorkout(e) {
 // ─────────────────────────────────────────────
 function renderStats() {
   const grid = document.getElementById('stats-grid');
-
   if (!workouts.length) {
-    grid.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;padding:40px">
+    grid.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;padding:44px">
       <div class="empty-icon">📊</div>
-      <p class="text-muted">Log some rides to see your stats.</p>
+      <p style="color:var(--muted);font-size:.88rem">Log some rides to see your stats.</p>
     </div>`;
     renderChart([]);
     return;
   }
 
-  const totalRides    = workouts.length;
-  const totalDistKm   = workouts.reduce((s,w)=>s+w.distKm, 0);
-  const totalMinutes  = workouts.reduce((s,w)=>s+w.duration, 0);
-  const totalCal      = workouts.reduce((s,w)=>s+w.calories, 0);
-  const avgSpeedKmh   = totalDistKm / (totalMinutes / 60);
-  const bestDistKm    = Math.max(...workouts.map(w=>w.distKm));
-  const bestSpeedKmh  = Math.max(...workouts.map(w=>w.speedKmh));
+  const totalRides   = workouts.length;
+  const totalDistKm  = workouts.reduce((s,w) => s + w.distKm, 0);
+  const totalMin     = workouts.reduce((s,w) => s + w.duration, 0);
+  const totalCal     = workouts.reduce((s,w) => s + w.calories, 0);
+  const avgSpeedKmh  = totalDistKm / (totalMin / 60);
+  const bestDistKm   = Math.max(...workouts.map(w => w.distKm));
+  const bestSpeedKmh = Math.max(...workouts.map(w => w.speedKmh));
 
-  const distDisplay   = toDisplay(totalDistKm);
-  const avgSpeedDisp  = toDisplay(avgSpeedKmh);
-  const bestDistDisp  = toDisplay(bestDistKm);
-  const bestSpeedDisp = toDisplay(bestSpeedKmh);
+  const hrs = Math.floor(totalMin / 60);
+  const min = totalMin % 60;
+  const timeStr = hrs > 0 ? `${hrs}h ${min}m` : `${min}m`;
 
-  const hours = Math.floor(totalMinutes / 60);
-  const mins  = totalMinutes % 60;
-  const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-
-  const stats = [
-    { icon:'🚴', label:'Total Rides',       value: totalRides,                   unit:'',         cls:'accent' },
-    { icon:'📏', label:`Total Distance`,    value: fmt(distDisplay),             unit:unit,        cls:'green'  },
-    { icon:'⏱️', label:'Total Time',        value: timeStr,                      unit:'',         cls:''       },
-    { icon:'⚡', label:`Avg Speed`,         value: fmt(avgSpeedDisp),            unit:`${unit}/h`, cls:'orange' },
-    { icon:'🏆', label:`Best Distance`,     value: fmt(bestDistDisp),            unit:unit,        cls:'purple' },
-    { icon:'🔥', label:`Best Speed`,        value: fmt(bestSpeedDisp),           unit:`${unit}/h`, cls:'accent' },
-    { icon:'💪', label:'Calories Burned',   value: totalCal.toLocaleString(),    unit:'kcal',     cls:'green'  },
+  const cards = [
+    { icon:'🚴', label:'Total Rides',    value: totalRides,                            unit:'',         cls:'lime'   },
+    { icon:'📏', label:'Total Distance', value: fmt(toDisplay(totalDistKm)),           unit: unit,      cls:'teal'   },
+    { icon:'⏱',  label:'Total Time',     value: timeStr,                               unit:'',         cls:''       },
+    { icon:'⚡', label:'Avg Speed',      value: fmt(toDisplay(avgSpeedKmh)),           unit:`${unit}/h`,cls:'orange' },
+    { icon:'🏆', label:'Best Distance',  value: fmt(toDisplay(bestDistKm)),            unit: unit,      cls:'lime'   },
+    { icon:'💨', label:'Best Speed',     value: fmt(toDisplay(bestSpeedKmh)),          unit:`${unit}/h`,cls:'teal'   },
+    { icon:'🔥', label:'Calories',       value: totalCal.toLocaleString(),             unit:'kcal',     cls:'orange' },
   ];
 
-  grid.innerHTML = stats.map(s => `
-    <div class="stat-card ${s.cls}">
-      <div class="stat-icon">${s.icon}</div>
-      <div class="stat-value">${s.value}</div>
-      <div class="stat-label">${s.label}${s.unit ? ' · '+s.unit : ''}</div>
+  grid.innerHTML = cards.map(c => `
+    <div class="stat-card ${c.cls}">
+      <div class="stat-icon">${c.icon}</div>
+      <div class="stat-value">${c.value}</div>
+      <div class="stat-label">${c.label}${c.unit ? ' · ' + c.unit : ''}</div>
     </div>
   `).join('');
 
-  // chart: last 10 rides in chronological order
-  const chartData = workouts.slice(0, 10).reverse();
-  renderChart(chartData);
+  renderChart(workouts.slice(0, 10).reverse());
 }
 
 // ─────────────────────────────────────────────
-//  SVG Chart
+//  Chart
 // ─────────────────────────────────────────────
 function renderChart(data) {
   const svg = document.getElementById('chart-svg');
   if (!data.length) {
-    svg.innerHTML = `<text x="50%" y="90" text-anchor="middle" fill="#4a5568" font-size="13" font-family="system-ui">No data yet</text>`;
+    svg.innerHTML = `<text x="50%" y="90" text-anchor="middle" fill="var(--muted2)" font-size="13" font-family="'DM Sans',system-ui">No data yet</text>`;
     return;
   }
 
   const W = 800, H = 180;
-  const padL = 46, padR = 12, padT = 16, padB = 40;
-  const innerW = W - padL - padR;
-  const innerH = H - padT - padB;
+  const pL = 48, pR = 12, pT = 20, pB = 42;
+  const iW = W - pL - pR, iH = H - pT - pB;
+  const vals  = data.map(w => toDisplay(w.distKm));
+  const maxV  = Math.max(...vals, 0.1);
+  const barW  = Math.min(46, iW / data.length - 8);
+  const sp    = iW / data.length;
+  const lime  = '#c8ff00';
+  const limeD = '#a0cc00';
 
-  const vals = data.map(w => toDisplay(w.distKm));
-  const maxVal = Math.max(...vals, 0.1);
-
-  const barW    = Math.min(48, (innerW / data.length) - 8);
-  const spacing = innerW / data.length;
-
-  // y-axis gridlines
-  const ticks = 4;
-  let gridLines = '';
-  let yLabels   = '';
-  for (let i = 0; i <= ticks; i++) {
-    const yVal  = (maxVal / ticks) * i;
-    const yPos  = padT + innerH - (yVal / maxVal) * innerH;
-    gridLines  += `<line x1="${padL}" y1="${yPos}" x2="${W-padR}" y2="${yPos}" stroke="#2e3248" stroke-width="1"/>`;
-    yLabels    += `<text x="${padL-6}" y="${yPos+4}" text-anchor="end" fill="#4a5568" font-size="10" font-family="system-ui">${fmt(yVal,0)}</text>`;
+  let grids = '', ylbls = '', bars = '', xlbls = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = (maxV / 4) * i;
+    const y = pT + iH - (v / maxV) * iH;
+    grids += `<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>`;
+    ylbls += `<text x="${pL-7}" y="${y+4}" text-anchor="end" fill="#3a3a48" font-size="10" font-family="'Barlow Condensed',sans-serif" font-weight="600">${fmt(v,0)}</text>`;
   }
-
-  // bars
-  const accent = '#4f8ef7';
-  const accentD = '#3d7ee8';
-  let bars = '', xlabels = '', tooltips = '';
 
   data.forEach((w, i) => {
     const v    = vals[i];
-    const barH = (v / maxVal) * innerH;
-    const x    = padL + spacing * i + spacing / 2 - barW / 2;
-    const y    = padT + innerH - barH;
+    const bH   = (v / maxV) * iH;
+    const x    = pL + sp * i + sp / 2 - barW / 2;
+    const y    = pT + iH - bH;
     const d    = new Date(w.date + 'T00:00:00');
     const lbl  = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
 
-    const rx = 4;
-    bars    += `<rect class="chart-bar" x="${x}" y="${y}" width="${barW}" height="${barH}"
-                  rx="${rx}" fill="url(#barGrad)" data-val="${fmt(v)} ${unit}"/>`;
-    xlabels += `<text x="${x + barW/2}" y="${H - padB + 14}" text-anchor="middle"
-                  fill="#4a5568" font-size="9.5" font-family="system-ui">${lbl}</text>`;
-    // value label on bar
-    if (barH > 20) {
-      bars += `<text x="${x + barW/2}" y="${y - 5}" text-anchor="middle"
-                 fill="#8892a4" font-size="9" font-family="system-ui">${fmt(v,1)}</text>`;
-    }
+    bars  += `<rect class="chart-bar" x="${x}" y="${y}" width="${barW}" height="${bH}" rx="5" fill="url(#limeGrad)"/>`;
+    if (bH > 22) bars += `<text x="${x+barW/2}" y="${y-5}" text-anchor="middle" fill="${limeD}" font-size="9.5" font-family="'Barlow Condensed',sans-serif" font-weight="700">${fmt(v,1)}</text>`;
+    xlbls += `<text x="${x+barW/2}" y="${H-pB+15}" text-anchor="middle" fill="#3a3a48" font-size="9.5" font-family="'Barlow Condensed',sans-serif" font-weight="600">${lbl}</text>`;
   });
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = `
     <defs>
-      <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${accent}"/>
-        <stop offset="100%" stop-color="${accentD}" stop-opacity="0.7"/>
+      <linearGradient id="limeGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${lime}"/>
+        <stop offset="100%" stop-color="${limeD}" stop-opacity="0.6"/>
       </linearGradient>
     </defs>
-    ${gridLines}
-    ${yLabels}
-    ${bars}
-    ${xlabels}
-    <text x="${padL}" y="${H-2}" fill="#4a5568" font-size="9" font-family="system-ui">${unit}</text>
+    ${grids}${ylbls}${bars}${xlbls}
+    <text x="${pL}" y="${H-2}" fill="#3a3a48" font-size="9" font-family="'Barlow Condensed',sans-serif">${unit}</text>
   `;
 }
 
@@ -963,61 +992,36 @@ function renderChart(data) {
 function renderHistory() {
   const list  = document.getElementById('workout-list');
   const count = document.getElementById('history-count');
-
   if (!workouts.length) {
     count.textContent = 'No rides yet';
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🚴</div>
-        <p>Your rides will appear here.<br>Log your first ride to get started!</p>
-      </div>`;
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🚴</div><p>Log your first ride to get started.</p></div>`;
     return;
   }
-
   count.textContent = `${workouts.length} ride${workouts.length !== 1 ? 's' : ''} logged`;
-
   list.innerHTML = workouts.map(w => {
-    const d     = new Date(w.date + 'T00:00:00');
-    const day   = d.getDate();
-    const month = d.toLocaleDateString('en-US', { month:'short' });
-    const year  = d.getFullYear();
-    const distD = fmt(toDisplay(w.distKm));
-    const spdD  = fmt(toDisplay(w.speedKmh));
-    const hrs   = Math.floor(w.duration/60);
-    const mins  = w.duration % 60;
-    const timeS = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
-
+    const d    = new Date(w.date + 'T00:00:00');
+    const hrs  = Math.floor(w.duration / 60);
+    const mins = w.duration % 60;
+    const tStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
     return `
     <div class="workout-item" id="wi-${w.id}">
       <div class="workout-date-col">
-        <div class="workout-day">${day}</div>
-        <div class="workout-month">${month}</div>
-        <div class="workout-month">${year}</div>
+        <div class="workout-day">${d.getDate()}</div>
+        <div class="workout-month">${d.toLocaleDateString('en-US',{month:'short'})}</div>
+        <div class="workout-month">${d.getFullYear()}</div>
       </div>
       <div>
         <div class="workout-metrics">
-          <div class="metric">
-            <span class="metric-val">${distD} ${unit}</span>
-            <span class="metric-lbl">Distance</span>
-          </div>
-          <div class="metric">
-            <span class="metric-val">${timeS}</span>
-            <span class="metric-lbl">Duration</span>
-          </div>
-          <div class="metric">
-            <span class="metric-val">${spdD} ${unit}/h</span>
-            <span class="metric-lbl">Avg Speed</span>
-          </div>
-          ${w.calories ? `<div class="metric">
-            <span class="metric-val">${w.calories} kcal</span>
-            <span class="metric-lbl">Calories</span>
-          </div>` : ''}
+          <div class="metric"><span class="metric-val">${fmt(toDisplay(w.distKm))} ${unit}</span><span class="metric-lbl">Distance</span></div>
+          <div class="metric"><span class="metric-val">${tStr}</span><span class="metric-lbl">Duration</span></div>
+          <div class="metric"><span class="metric-val">${fmt(toDisplay(w.speedKmh))} ${unit}/h</span><span class="metric-lbl">Avg Speed</span></div>
+          ${w.calories ? `<div class="metric"><span class="metric-val">${w.calories} kcal</span><span class="metric-lbl">Calories</span></div>` : ''}
         </div>
         ${w.notes ? `<div class="workout-notes">${escHtml(w.notes)}</div>` : ''}
       </div>
       <div class="workout-actions">
-        <button class="btn-icon delete" onclick="deleteWorkout(${w.id})" title="Delete ride">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        <button class="btn-icon delete" onclick="deleteWorkout(${w.id})" title="Delete">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
         </button>
       </div>
     </div>`;
@@ -1029,59 +1033,38 @@ function escHtml(s) {
 }
 
 // ─────────────────────────────────────────────
-//  Delete
+//  Delete / Clear
 // ─────────────────────────────────────────────
 function deleteWorkout(id) {
   workouts = workouts.filter(w => w.id !== id);
-  save();
-  renderStats();
-  renderHistory();
+  save(); renderStats(); renderHistory();
   toast('Ride deleted', 'red');
 }
 
-// ─────────────────────────────────────────────
-//  Clear all
-// ─────────────────────────────────────────────
-function showClearModal() {
-  document.getElementById('modal-overlay').classList.add('show');
-}
-
-function hideModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
-}
+function showClearModal() { document.getElementById('modal-overlay').classList.add('show'); }
+function hideModal()       { document.getElementById('modal-overlay').classList.remove('show'); }
 
 function clearAll() {
-  workouts = [];
-  save();
-  hideModal();
-  renderStats();
-  renderHistory();
+  workouts = []; save(); hideModal();
+  renderStats(); renderHistory();
   toast('All data cleared', 'red');
 }
 
-// Click outside to close
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) hideModal();
 });
 
 // ─────────────────────────────────────────────
-//  CSV Export
+//  Export
 // ─────────────────────────────────────────────
 function exportCSV() {
-  if (!workouts.length) { toast('No rides to export', 'orange'); return; }
-
-  const u = unit;
-  const headers = ['Date','Duration (min)',`Distance (${u})`,`Avg Speed (${u}/h)`,'Calories','Notes'];
-
+  if (!workouts.length) { toast('Nothing to export', 'orange'); return; }
+  const headers = ['Date','Duration (min)',`Distance (${unit})`,`Avg Speed (${unit}/h)`,'Calories','Notes'];
   const rows = workouts.map(w => [
-    w.date,
-    w.duration,
-    fmt(toDisplay(w.distKm), 2),
-    fmt(toDisplay(w.speedKmh), 2),
-    w.calories,
-    `"${(w.notes||'').replace(/"/g,'""')}"`
+    w.date, w.duration,
+    fmt(toDisplay(w.distKm), 2), fmt(toDisplay(w.speedKmh), 2),
+    w.calories, `"${(w.notes||'').replace(/"/g,'""')}"`
   ].join(','));
-
   const csv  = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url  = URL.createObjectURL(blob);
@@ -1090,7 +1073,7 @@ function exportCSV() {
   a.download = `cycling-tracker-${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
-  toast('CSV exported!', 'green');
+  toast('CSV exported!', 'lime');
 }
 
 // ─────────────────────────────────────────────
@@ -1109,11 +1092,11 @@ function switchTab(name) {
 //  Toast
 // ─────────────────────────────────────────────
 let toastTimer;
-function toast(msg, color) {
+function toast(msg, type) {
   const el = document.getElementById('toast');
-  const icons = { green:'✓', red:'✕', orange:'!' };
-  const colors = { green: 'var(--green)', red: 'var(--red)', orange: 'var(--orange)' };
-  el.innerHTML = `<span style="color:${colors[color]||'var(--accent)'};font-size:1rem">${icons[color]||'ℹ'}</span> ${msg}`;
+  const colors = { lime:'var(--lime)', red:'var(--red)', orange:'var(--orange)', teal:'var(--teal)' };
+  const icons  = { lime:'✓', red:'✕', orange:'!', teal:'↓' };
+  el.innerHTML = `<span style="color:${colors[type]||'var(--lime)'}">${icons[type]||'ℹ'}</span> ${msg}`;
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
